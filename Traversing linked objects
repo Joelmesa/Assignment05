@@ -1,0 +1,139 @@
+public class TrainLine {
+
+    private String name;
+    private TrainStation head;
+    private TrainStation tail;
+    private int numberOfStations;
+
+    public TrainLine(String name, TrainStation head) {
+        this.name = name;
+        this.head = head;
+        this.numberOfStations = (head != null) ? 1 : 0;
+        this.tail = head;
+    }
+
+    public TrainLine(String name) {
+        this(name, null);
+    }
+
+    public void add(String name) {
+        TrainStation newStation = new TrainStation(name);
+        if (this.head == null) {
+            this.head = newStation;
+        } else {
+            this.tail.setNext(newStation);
+        }
+        this.tail = newStation;
+        this.numberOfStations++;
+    }
+
+    public int getNumberOfStations() {
+        return numberOfStations;
+    }
+
+    // Only one return statement and no use of == for objects
+    public boolean contains(String name) {
+        TrainStation current = this.head;
+        boolean found = false;  // To ensure only one return statement
+        while (current != null && !found) {
+            if (current.getName().equals(name)) {  // .equals for object comparison
+                found = true;
+            }
+            current = current.getNext();
+        }
+        return found;
+    }
+
+    // Only one return statement, avoiding multiple returns
+    public int indexOf(String name) {
+        TrainStation current = this.head;
+        int index = -1;  // Initialize to -1 to indicate not found
+        int counter = 0;  // To track the index
+
+        while (current != null && index == -1) {
+            if (current.getName().equals(name)) {
+                index = counter;
+            } else {
+                current = current.getNext();
+                counter++;
+            }
+        }
+        return index;  // Always one return statement
+    }
+
+    /**
+     * Method to reverse the stations in the train line.
+     * This method calls a recursive helper function to reverse the order of the stations.
+     */
+    public String reverseList() {
+        return reverseStationsHelper(this.head);
+    }
+
+    /**
+     * A helper method to recursively reverse the stations.
+     * This method uses recursion to traverse through the train stations and
+     * return their names in reverse order, one station per line.
+     * 
+     * @param station The current station being processed.
+     * @return A string containing the reversed order of station names.
+     */
+    private String reverseStationsHelper(TrainStation station) {
+        if (station == null) {
+            return "";  // Return empty string if no station
+        }
+        String restOfList = reverseStationsHelper(station.getNext());  // Get the rest of the list in reverse
+        if (restOfList.isEmpty()) {
+            return station.getName();  // Return name if last station
+        }
+        return restOfList + "\n" + station.getName();  // Concatenate in reverse order
+    }
+
+    /**
+     * Checks if the train line is empty.
+     * 
+     * @return true if the train line has no stations, false otherwise.
+     */
+    public boolean isEmpty() {
+        return this.head == null;  // Return true if head is null (trainline is empty)
+    }
+
+    public static void main(String[] args) {
+        String[] stationNames = { "Howard", "Jarvis", "Morse", "Loyola", "Granville", "Thorndale" };
+        TrainLine redLineSB = new TrainLine("Red Line SB");
+        for (String station : stationNames) {
+            redLineSB.add(station);
+        }
+
+        System.out.println("Contains Howard: " + redLineSB.contains("Howard"));  // true
+        System.out.println("Index of Morse: " + redLineSB.indexOf("Morse"));      // 2
+        System.out.println("Reverse list:\n" + redLineSB.reverseList());
+        System.out.println("Is empty: " + redLineSB.isEmpty());                   // false
+    }
+}
+
+class TrainStation {
+
+    private String name;
+    private TrainStation next;
+
+    public TrainStation(String name) {
+        this.name = name;
+        this.next = null;
+    }
+
+    public void setNext(TrainStation next) {
+        this.next = next;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public boolean hasNext() {
+        return this.next != null;
+    }
+
+    public TrainStation getNext() {
+        return this.next;
+    }
+}
